@@ -279,6 +279,10 @@ class MainWindow(QWidget):
         rules.setStyleSheet("color:#333;")  # color: grey
         ai_layout.addWidget(rules)
 
+        self.save_btn = QPushButton("Save Plot")
+        ai_layout.addWidget(self.save_btn)
+        self.save_btn.clicked.connect(self.save_plot)
+        
         self.ai_warn = QLabel("")
         self.ai_warn.setStyleSheet("color:#a00;")
         ai_layout.addWidget(self.ai_warn)
@@ -288,9 +292,7 @@ class MainWindow(QWidget):
         self.ai_label_pairs = []  # list[ (ch_label, val_label) ]
         ai_layout.addLayout(self.ai_grid)
 
-        self.save_btn = QPushButton("Save Plot")
-        ai_layout.addWidget(self.save_btn)
-        self.save_btn.clicked.connect(self.save_plot)
+        
         # Build initial table
         self.rebuild_ai_table()
 
