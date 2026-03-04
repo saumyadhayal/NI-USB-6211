@@ -1,5 +1,6 @@
 # daq_io.py
 
+import math
 import time
 from matplotlib import lines
 
@@ -121,7 +122,7 @@ def read_ai(device, ai_channels, term_mode="RSE"):
         # Simulation
         t = time.time() - _sim_ai_t0
         for i, ch in enumerate(ai_channels):
-            vals[ch] = float(i)
+            vals[ch] = 5.0 * (1 + math.sin(t + i))  # simple sine wave pattern for simulation
         return vals
 
     # NI‑DAQmx path
@@ -146,5 +147,5 @@ def read_ai(device, ai_channels, term_mode="RSE"):
         # Hardware error -> simulation
         t = time.time() - _sim_ai_t0
         for i, ch in enumerate(ai_channels):
-            vals[ch] = 0.0
+            vals[ch] = math.sin(t + i)  # simple sine wave pattern for simulation
         return vals

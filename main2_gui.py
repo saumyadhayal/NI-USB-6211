@@ -47,9 +47,11 @@ class AIGraph(QDialog):
 
         self.layout = QVBoxLayout(self)
 
-        self.fig = Figure(figsize=(7, 3.8))
+        self.fig = fig or Figure(figsize=(7, 3.8))  # continue using main window's figure if already using one
+                                                    # otherwise create new
+        self.ax = ax or self.fig.add_subplot(111)
         self.canvas = FigureCanvasQTAgg(self.fig)
-        self.ax = self.fig.add_subplot(111)
+
         self.layout.addWidget(self.canvas)
 
         self.ax.set_xlabel("Time (s)")
@@ -282,7 +284,7 @@ class MainWindow(QWidget):
         self.save_btn = QPushButton("Save Plot")
         ai_layout.addWidget(self.save_btn)
         self.save_btn.clicked.connect(self.save_plot)
-        
+
         self.ai_warn = QLabel("")
         self.ai_warn.setStyleSheet("color:#a00;")
         ai_layout.addWidget(self.ai_warn)
@@ -492,13 +494,16 @@ class MainWindow(QWidget):
 
     def save_plot(self):
         os.makedirs("saved_plots", exist_ok=True)
-        ts = time.strftime("%m%d-%H%M%S")
-        path = os.path.join("saved_plots", f"ai_plot_{ts}.png")
+        ts = time.strftime("%m.%d-%H.%M.%S")
+        path = os.path.join("saved_plots", f"{ts}.png")
 
-        # Ensure axes reflect latest data; if you're plotting elsewhere, make sure that
-        # code updates self.ax before saving.
-        self.canvas.draw()
-        self.fig.savefig(path, dpi=150, bbox_inches="tight")
+        
+        if self.ai_graph_dlg is not None:
+            self.ai_graph_dlg.canvas.draw()
+            self.ai_graph_dlg.fig.savefig(path, dpi=150, bbox_inches="tight")
+            QMessageBox.information(self, "Saved", f"Saved plot to:\n{path}")
+            return
+
         QMessageBox.information(self, "Saved", f"Saved plot to:\n{path}")
 
 if __name__ == "__main__":
